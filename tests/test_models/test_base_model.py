@@ -1,16 +1,16 @@
 #!/usr/bin/python3
 """ """
-from models.base_model import BaseModel
-import unittest
 import datetime
-from uuid import UUID
 import json
 import os
+import unittest
+from uuid import UUID
+
+from models.base_model import BaseModel
 
 
-class test_basemodel(unittest.TestCase):
+class TestBasemodel(unittest.TestCase):
     """ """
-
     def __init__(self, *args, **kwargs):
         """ """
         super().__init__(*args, **kwargs)
@@ -24,7 +24,7 @@ class test_basemodel(unittest.TestCase):
     def tearDown(self):
         try:
             os.remove('file.json')
-        except OSError as error:
+        except Exception:
             pass
 
     def test_default(self):
@@ -50,11 +50,12 @@ class test_basemodel(unittest.TestCase):
     def test_save(self):
         """ Testing save """
         i = self.value()
-        i.save()
-        key = self.name + "." + i.id
-        with open('file.json', 'r') as f:
-            j = json.load(f)
-            self.assertEqual(j[key], i.to_dict())
+        if os.getenv('HBNB_TYPE_STORAGE') != 'db':
+            i.save()
+            key = self.name + "." + i.id
+            with open('file.json', 'r') as f:
+                j = json.load(f)
+                self.assertEqual(j[key], i.to_dict())
 
     def test_str(self):
         """ """
@@ -77,8 +78,8 @@ class test_basemodel(unittest.TestCase):
     def test_kwargs_one(self):
         """ """
         n = {'Name': 'test'}
-        with self.assertRaises(KeyError):
-            new = self.value(**n)
+        new = self.value(**n)
+        self.assertTrue(hasattr(new, 'Name'))
 
     def test_id(self):
         """ """
