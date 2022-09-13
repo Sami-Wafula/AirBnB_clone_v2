@@ -2,6 +2,7 @@
 """ Console Module """
 import cmd
 import sys
+import os
 from shlex import split
 import re
 from models.base_model import BaseModel
